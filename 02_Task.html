@@ -5,109 +5,180 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CSS 3D Room</title>
+<title>Professional 3D CSS Room</title>
 <style>
-  /* Center the room on the screen and add a dark background */
+  :root {
+    /* Color Palette */
+    --wall-color-light: #94A692; /* Soft Sage Green */
+    --wall-color-dark: #7D8E7B;  /* Deeper Sage for depth */
+    --floor-base: #C2A383;       /* Warm Wood */
+    --floor-line: #A88B6D;
+    --trim-color: #F4F4F0;       /* Off-white */
+    --window-sky: #A6C8CE;
+    --rug-color: #EAE6D9;
+    
+    /* Dimensions */
+    --room-size: 400px;
+    --half-size: 200px;
+  }
+
   body {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-color: #1a1a1a;
+    background-color: #121212; /* Dark studio background */
     margin: 0;
-    /* This gives the 3D depth effect */
-    perspective: 1200px; 
+    perspective: 1500px; 
+    font-family: sans-serif;
+    overflow: hidden;
   }
 
-  /* The main room container */
+  /* Main Room Container with a slow panning animation */
   .room {
     position: relative;
-    width: 300px;
-    height: 300px;
-    /* Allows child elements to exist in 3D space */
+    width: var(--room-size);
+    height: var(--room-size);
     transform-style: preserve-3d; 
-    /* Rotate the whole room to get an isometric angle */
-    transform: rotateX(-20deg) rotateY(45deg);
-    transition: transform 0.5s ease;
+    animation: panRoom 15s infinite alternate ease-in-out;
   }
 
-  /* Hover effect to spin the room slightly */
-  .room:hover {
-    transform: rotateX(-20deg) rotateY(15deg);
+  @keyframes panRoom {
+    0%   { transform: rotateX(-15deg) rotateY(35deg); }
+    100% { transform: rotateX(-20deg) rotateY(55deg); }
   }
 
-  /* Base styling for all walls and floor */
+  /* Base styling for all 3 major planes */
   .surface {
     position: absolute;
-    width: 300px;
-    height: 300px;
-    /* Adds a subtle shadow to the corners */
-    box-shadow: inset 0 0 60px rgba(0,0,0,0.3);
+    width: var(--room-size);
+    height: var(--room-size);
   }
 
-  /* The Floor */
+  /* --- THE FLOOR --- */
   .floor {
-    transform: rotateX(90deg) translateZ(-150px);
-    /* Create a checkered tile pattern using gradients */
-    background-color: #ecf0f1;
-    background-image: 
-      linear-gradient(45deg, #bdc3c7 25%, transparent 25%, transparent 75%, #bdc3c7 75%, #bdc3c7), 
-      linear-gradient(45deg, #bdc3c7 25%, transparent 25%, transparent 75%, #bdc3c7 75%, #bdc3c7);
-    background-size: 40px 40px;
-    background-position: 0 0, 20px 20px;
+    transform: rotateX(90deg) translateZ(calc(var(--half-size) * -1));
+    /* Wood plank effect mixed with a sunlight gradient from the window */
+    background: 
+      linear-gradient(135deg, rgba(255,253,240,0.3) 0%, transparent 50%),
+      repeating-linear-gradient(to right, var(--floor-base) 0px, var(--floor-base) 38px, var(--floor-line) 40px);
+    box-shadow: inset 0 0 80px rgba(0,0,0,0.5);
   }
 
-  /* Left Wall */
+  /* --- LEFT WALL (Art Wall) --- */
   .wall-left {
-    background: #3498db; /* Blue wall */
-    transform: rotateY(90deg) translateZ(-150px);
+    background: var(--wall-color-light); 
+    transform: rotateY(90deg) translateZ(calc(var(--half-size) * -1));
+    /* Gradient to simulate corner shadows */
+    background-image: linear-gradient(to right, rgba(0,0,0,0.2) 0%, transparent 30%);
   }
 
-  /* Right Wall */
+  /* --- RIGHT WALL (Window Wall) --- */
   .wall-right {
-    background: #2980b9; /* Slightly darker blue for depth */
-    transform: translateZ(-150px);
+    background: var(--wall-color-dark);
+    transform: translateZ(calc(var(--half-size) * -1));
+    /* Gradient to simulate light hitting the wall around the window */
+    background-image: radial-gradient(circle at 120px 150px, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.3) 100%);
   }
 
-  /* A simple window on the right wall */
+  /* --- ARCHITECTURAL DETAILS --- */
+  /* Baseboards */
+  .baseboard {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 25px;
+    background: var(--trim-color);
+    box-shadow: inset 0 5px 10px rgba(0,0,0,0.05), 0 -2px 5px rgba(0,0,0,0.1);
+  }
+
+  /* Multi-pane Window */
   .window {
     position: absolute;
     top: 60px;
-    left: 80px;
-    width: 100px;
-    height: 120px;
-    background: #87ceeb; /* Sky blue */
-    border: 8px solid #ffffff;
-    box-shadow: inset 0 0 15px rgba(0,0,0,0.2), 10px 10px 20px rgba(0,0,0,0.3);
+    left: 70px;
+    width: 140px;
+    height: 200px;
+    background: var(--window-sky); 
+    border: 12px solid var(--trim-color);
+    border-radius: 5px;
+    /* Soft glow coming into the room */
+    box-shadow: 
+      inset 0 0 20px rgba(0,0,0,0.2), 
+      -15px 15px 30px rgba(255,253,240,0.15);
+    overflow: hidden;
+    /* Window frame crossbars */
+    background-image: 
+      linear-gradient(to right, transparent 46%, var(--trim-color) 46%, var(--trim-color) 54%, transparent 54%),
+      linear-gradient(to bottom, transparent 48%, var(--trim-color) 48%, var(--trim-color) 52%, transparent 52%);
   }
 
-  /* A decorative rug on the floor */
+  /* Simulated clouds inside the window */
+  .window::after {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: -20px;
+    width: 100px;
+    height: 30px;
+    background: rgba(255,255,255,0.6);
+    border-radius: 50px;
+    filter: blur(8px);
+    box-shadow: 60px 40px 0 10px rgba(255,255,255,0.5);
+  }
+
+  /* Framed Wall Art */
+  .artwork {
+    position: absolute;
+    top: 80px;
+    right: 80px;
+    width: 100px;
+    height: 140px;
+    background: #EAE6D9;
+    border: 4px solid #333; /* Black minimalist frame */
+    box-shadow: 5px 5px 15px rgba(0,0,0,0.3);
+    border-radius: 2px;
+    /* Abstract art painting using CSS shapes */
+    background-image: 
+      circle at 50% 40% (rgba(212, 181, 150, 0.8) 20px, transparent 21px),
+      linear-gradient(45deg, transparent 40%, var(--wall-color-dark) 40%, var(--wall-color-dark) 60%, transparent 60%);
+  }
+
+  /* Modern Circular Rug */
   .rug {
     position: absolute;
     bottom: 50px;
-    left: 50px;
-    width: 180px;
-    height: 120px;
-    background: #e74c3c; /* Red rug */
-    border-radius: 10px;
-    /* Positioned slightly above the floor on the Z-axis */
-    transform: rotateX(90deg) translateZ(-148px);
-    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    left: 60px;
+    width: 220px;
+    height: 220px;
+    background: var(--rug-color);
+    border-radius: 50%;
+    transform: rotateX(90deg) translateZ(calc(var(--half-size) * -1 + 2px));
+    box-shadow: 0 0 15px rgba(0,0,0,0.4);
+    /* Subtle woven texture */
+    background-image: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.03) 41%), 
+                      repeating-radial-gradient(circle, transparent, transparent 4px, rgba(0,0,0,0.02) 5px);
   }
 </style>
 </head>
 <body>
 
-  <!-- The 3D Room Structure -->
   <div class="room">
+    <!-- Floor and Floor Decor -->
     <div class="surface floor"></div>
-    <div class="surface wall-left"></div>
-    
-    <div class="surface wall-right">
-      <div class="window"></div>
+    <div class="rug"></div>
+
+    <!-- Left Wall and Details -->
+    <div class="surface wall-left">
+      <div class="baseboard"></div>
+      <div class="artwork"></div>
     </div>
     
-    <div class="rug"></div>
+    <!-- Right Wall and Details -->
+    <div class="surface wall-right">
+      <div class="baseboard"></div>
+      <div class="window"></div>
+    </div>
   </div>
 
 </body>
