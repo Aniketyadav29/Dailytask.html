@@ -1,1 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Student Attendance List</title>
 
+    <style>
+        body{
+            font-family: Arial, sans-serif;
+            background:#f4f4f4;
+            padding:20px;
+        }
+
+        h1{
+            text-align:center;
+            color:#333;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+            background:white;
+            box-shadow:0 0 10px rgba(0,0,0,0.1);
+        }
+
+        th, td{
+            border:1px solid #ccc;
+            padding:12px;
+            text-align:center;
+        }
+
+        th{
+            background:#007bff;
+            color:white;
+        }
+
+        tr:nth-child(even){
+            background:#f9f9f9;
+        }
+
+        .present{
+            color:green;
+            font-weight:bold;
+        }
+
+        .absent{
+            color:red;
+            font-weight:bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Student Attendance List</h1>
+
+    <table>
+        <tr>
+            <th>S.No</th>
+            <th>Student Name</th>
+            <th>Roll Number</th>
+            <th>Attendance</th>
+        </tr>
+
+        <tr>
+            <td>1</td>
+            <td>Rahul Sharma</td>
+            <td>101</td>
+            <td class="present">Present</td>
+        </tr>
+
+        <tr>
+            <td>2</td>
+            <td>Ankit Verma</td>
+            <td>102</td>
+            <td class="absent">Absent</td>
+        </tr>
+
+        <tr>
+            <td>3</td>
+            <td>Priya Singh</td>
+            <td>103</td>
+            <td class="present">Present</td>
+        </tr>
+
+        <tr>
+            <td>4</td>
+            <td>Neha Yadav</td>
+            <td>104</td>
+            <td class="present">Present</td>
+        </tr>
+
+        <tr>
+            <td>5</td>
+            <td>Aman Gupta</td>
+            <td>105</td>
+            <td class="absent">Absent</td>
+        </tr>
+
+        <tr>
+            <td>6</td>
+            <td>Rohit Kumar</td>
+            <td>106</td>
+            <td class="present">Present</td>
+        </tr>
+
+        <tr>
+            <td>7</td>
+            <td>Simran Kaur</td>
+            <td>107</td>
+            <td class="present">Present</td>
+        </tr>
+
+        <tr>
+            <td>8</td>
+            <td>Vikas Mishra</td>
+            <td>108</td>
+            <td class="absent">Absent</td>
+        </tr>
+
+    </table>
+
+</body>
+  </html>
