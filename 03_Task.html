@@ -1,115 +1,219 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Student Attendance List</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-    <style>
-        body{
-            font-family: Arial, sans-serif;
-            background:#f4f4f4;
-            padding:20px;
-        }
+<title>Attendance Management System</title>
 
-        h1{
-            text-align:center;
-            color:#333;
-        }
+<style>
+    *{
+        margin:0;
+        padding:0;
+        box-sizing:border-box;
+        font-family:Arial, sans-serif;
+    }
 
-        table{
-            width:100%;
-            border-collapse:collapse;
-            background:white;
-            box-shadow:0 0 10px rgba(0,0,0,0.1);
-        }
+    body{
+        background:#f4f7fc;
+        padding:30px;
+    }
 
-        th, td{
-            border:1px solid #ccc;
-            padding:12px;
-            text-align:center;
-        }
+    .container{
+        max-width:1000px;
+        margin:auto;
+        background:white;
+        padding:25px;
+        border-radius:12px;
+        box-shadow:0 4px 10px rgba(0,0,0,0.1);
+    }
 
-        th{
-            background:#007bff;
-            color:white;
-        }
+    h1{
+        text-align:center;
+        margin-bottom:20px;
+        color:#333;
+    }
 
-        tr:nth-child(even){
-            background:#f9f9f9;
-        }
+    table{
+        width:100%;
+        border-collapse:collapse;
+        margin-top:20px;
+    }
 
-        .present{
-            color:green;
-            font-weight:bold;
-        }
+    th, td{
+        border:1px solid #ddd;
+        padding:12px;
+        text-align:center;
+    }
 
-        .absent{
-            color:red;
-            font-weight:bold;
-        }
-    </style>
+    th{
+        background:#007bff;
+        color:white;
+    }
+
+    tr:nth-child(even){
+        background:#f9f9f9;
+    }
+
+    select{
+        padding:5px 10px;
+        border-radius:5px;
+    }
+
+    .summary{
+        margin-top:20px;
+        display:flex;
+        justify-content:space-around;
+        font-size:18px;
+        font-weight:bold;
+    }
+
+    .present{
+        color:green;
+    }
+
+    .absent{
+        color:red;
+    }
+
+    button{
+        margin-top:20px;
+        padding:12px 20px;
+        border:none;
+        background:#28a745;
+        color:white;
+        border-radius:6px;
+        cursor:pointer;
+        font-size:16px;
+    }
+
+    button:hover{
+        background:#218838;
+    }
+</style>
 </head>
 
 <body>
 
+<div class="container">
+
     <h1>Student Attendance List</h1>
 
-    <table>
-        <tr>
-            <th>S.No</th>
-            <th>Student Name</th>
-            <th>Roll Number</th>
-            <th>Attendance</th>
-        </tr>
+    <table id="attendanceTable">
+        <thead>
+            <tr>
+                <th>S.No</th>
+                <th>Student Name</th>
+                <th>Roll No</th>
+                <th>Status</th>
+            </tr>
+        </thead>
 
-        <tr>
-            <td>1</td>
-            <td>Rahul Sharma</td>
-            <td>101</td>
-            <td class="present">Present</td>
-        </tr>
+        <tbody id="studentBody">
+        </tbody>
+    </table>
 
-        <tr>
-            <td>2</td>
-            <td>Ankit Verma</td>
-            <td>102</td>
-            <td class="absent">Absent</td>
-        </tr>
+    <div class="summary">
+        <div class="present">Present: <span id="presentCount">0</span></div>
+        <div class="absent">Absent: <span id="absentCount">0</span></div>
+    </div>
 
-        <tr>
-            <td>3</td>
-            <td>Priya Singh</td>
-            <td>103</td>
-            <td class="present">Present</td>
-        </tr>
+    <center>
+        <button onclick="saveAttendance()">Save Attendance</button>
+    </center>
 
-        <tr>
-            <td>4</td>
-            <td>Neha Yadav</td>
-            <td>104</td>
-            <td class="present">Present</td>
-        </tr>
+</div>
 
-        <tr>
-            <td>5</td>
-            <td>Aman Gupta</td>
-            <td>105</td>
-            <td class="absent">Absent</td>
-        </tr>
+<script>
 
-        <tr>
-            <td>6</td>
-            <td>Rohit Kumar</td>
-            <td>106</td>
-            <td class="present">Present</td>
-        </tr>
+    // Student Data
+    const students = [
+        {name:"Rahul Sharma", roll:101},
+        {name:"Ankit Verma", roll:102},
+        {name:"Priya Singh", roll:103},
+        {name:"Neha Yadav", roll:104},
+        {name:"Aman Gupta", roll:105},
+        {name:"Rohit Kumar", roll:106},
+        {name:"Simran Kaur", roll:107},
+        {name:"Vikas Mishra", roll:108},
+        {name:"Aryan Singh", roll:109},
+        {name:"Kunal Patel", roll:110}
+    ];
 
-        <tr>
-            <td>7</td>
-            <td>Simran Kaur</td>
-            <td>107</td>
-            <td class="present">Present</td>
+    const studentBody = document.getElementById("studentBody");
+
+    // Generate Table Dynamically
+    students.forEach((student,index)=>{
+
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${student.name}</td>
+            <td>${student.roll}</td>
+            <td>
+                <select onchange="updateCount()">
+                    <option value="Present">Present</option>
+                    <option value="Absent">Absent</option>
+                </select>
+            </td>
+        `;
+
+        studentBody.appendChild(row);
+    });
+
+    // Update Present/Absent Count
+    function updateCount(){
+
+        const selects = document.querySelectorAll("select");
+
+        let present = 0;
+        let absent = 0;
+
+        selects.forEach(select=>{
+            if(select.value === "Present"){
+                present++;
+            }else{
+                absent++;
+            }
+        });
+
+        document.getElementById("presentCount").innerText = present;
+        document.getElementById("absentCount").innerText = absent;
+    }
+
+    // Initial Count
+    updateCount();
+
+    // Save Attendance
+    function saveAttendance(){
+
+        let attendanceData = [];
+
+        const rows = document.querySelectorAll("#studentBody tr");
+
+        rows.forEach(row=>{
+
+            const name = row.cells[1].innerText;
+            const roll = row.cells[2].innerText;
+            const status = row.querySelector("select").value;
+
+            attendanceData.push({
+                name,
+                roll,
+                status
+            });
+        });
+
+        console.log(attendanceData);
+
+        alert("Attendance Saved Successfully!");
+    }
+
+</script>
+
+</body>
+</            <td class="present">Present</td>
         </tr>
 
         <tr>
