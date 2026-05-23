@@ -1,10 +1,12 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Automatic Wallpaper Changer</title>
+  <title>Advanced Automatic Wallpaper Changer</title>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
   <style>
     *{
@@ -14,79 +16,224 @@
     }
 
     body{
+      font-family:'Poppins', sans-serif;
       height:100vh;
       overflow:hidden;
-      font-family:Arial, sans-serif;
       background-size:cover;
       background-position:center;
       background-repeat:no-repeat;
-      transition: background-image 1s ease-in-out;
+      transition:background-image 1.5s ease-in-out;
+      position:relative;
     }
 
+    /* Dark Overlay */
     .overlay{
-      width:100%;
-      height:100vh;
-      background:rgba(0,0,0,0.35);
+      position:absolute;
+      inset:0;
+      background:linear-gradient(
+        rgba(0,0,0,0.35),
+        rgba(0,0,0,0.6)
+      );
       display:flex;
       justify-content:center;
       align-items:center;
       flex-direction:column;
-      color:white;
       text-align:center;
+      color:white;
+      padding:20px;
     }
 
     h1{
-      font-size:55px;
-      margin-bottom:10px;
-      text-shadow:2px 2px 10px black;
+      font-size:65px;
+      font-weight:700;
+      text-shadow:0 0 20px rgba(0,0,0,0.8);
+      animation:fadeIn 2s ease;
     }
 
     p{
-      font-size:20px;
-      text-shadow:1px 1px 5px black;
+      margin-top:15px;
+      font-size:22px;
+      opacity:0.9;
+      animation:slideUp 2s ease;
     }
+
+    /* Glass Control Panel */
+    .controls{
+      position:absolute;
+      bottom:30px;
+      left:50%;
+      transform:translateX(-50%);
+      display:flex;
+      gap:15px;
+      background:rgba(255,255,255,0.1);
+      backdrop-filter:blur(10px);
+      padding:15px 25px;
+      border-radius:20px;
+      box-shadow:0 8px 20px rgba(0,0,0,0.3);
+    }
+
+    button{
+      border:none;
+      outline:none;
+      padding:12px 20px;
+      border-radius:12px;
+      font-size:16px;
+      font-weight:600;
+      cursor:pointer;
+      transition:0.3s;
+      color:white;
+      background:rgba(255,255,255,0.15);
+      backdrop-filter:blur(5px);
+    }
+
+    button:hover{
+      transform:scale(1.08);
+      background:rgba(255,255,255,0.25);
+    }
+
+    /* Wallpaper Counter */
+    .counter{
+      position:absolute;
+      top:25px;
+      right:25px;
+      background:rgba(0,0,0,0.35);
+      padding:12px 18px;
+      border-radius:15px;
+      color:white;
+      font-size:16px;
+      backdrop-filter:blur(8px);
+    }
+
+    /* Animations */
+    @keyframes fadeIn{
+      from{
+        opacity:0;
+        transform:translateY(-20px);
+      }
+      to{
+        opacity:1;
+        transform:translateY(0);
+      }
+    }
+
+    @keyframes slideUp{
+      from{
+        opacity:0;
+        transform:translateY(20px);
+      }
+      to{
+        opacity:1;
+        transform:translateY(0);
+      }
+    }
+
+    /* Responsive */
+    @media(max-width:768px){
+      h1{
+        font-size:40px;
+      }
+
+      p{
+        font-size:18px;
+      }
+
+      .controls{
+        flex-wrap:wrap;
+        width:90%;
+        justify-content:center;
+      }
+
+      button{
+        width:120px;
+      }
+    }
+
   </style>
 </head>
 
 <body>
 
   <div class="overlay">
-    <h1>Automatic Wallpaper Changer</h1>
-    <p>Wallpaper changes every 5 seconds</p>
+    <h1>Dynamic Wallpaper Changer</h1>
+    <p>Beautiful wallpapers change automatically every 5 seconds</p>
+  </div>
+
+  <div class="counter" id="counter">
+    Wallpaper 1 / 5
+  </div>
+
+  <!-- Control Buttons -->
+  <div class="controls">
+    <button onclick="prevWallpaper()">⏮ Previous</button>
+    <button onclick="toggleAuto()" id="autoBtn">⏸ Pause</button>
+    <button onclick="nextWallpaper()">⏭ Next</button>
   </div>
 
   <script>
-    // List of wallpapers
+
+    // Wallpaper List
     const wallpapers = [
-      "https://picsum.photos/id/1015/1920/1080",
-      "https://picsum.photos/id/1016/1920/1080",
-      "https://picsum.photos/id/1018/1920/1080",
-      "https://picsum.photos/id/1020/1920/1080",
-      "https://picsum.photos/id/1024/1920/1080"
+      "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1920",
+      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1920",
+      "https://images.unsplash.com/photo-1493246507139-91e8fad9978e?q=80&w=1920",
+      "https://images.unsplash.com/photo-1511884642898-4c92249e20b6?q=80&w=1920",
+      "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?q=80&w=1920"
     ];
 
     let index = 0;
+    let autoChange = true;
 
-    // Function to change wallpaper
-    function changeWallpaper() {
+    // Change Wallpaper
+    function showWallpaper(){
       document.body.style.backgroundImage =
         `url('${wallpapers[index]}')`;
 
-      index++;
+      document.getElementById("counter").innerText =
+        `Wallpaper ${index + 1} / ${wallpapers.length}`;
+    }
 
+    // Next Wallpaper
+    function nextWallpaper(){
+      index++;
       if(index >= wallpapers.length){
         index = 0;
       }
+      showWallpaper();
     }
 
-    // Initial wallpaper
-    changeWallpaper();
+    // Previous Wallpaper
+    function prevWallpaper(){
+      index--;
+      if(index < 0){
+        index = wallpapers.length - 1;
+      }
+      showWallpaper();
+    }
 
-    // Change every 5 seconds
-    setInterval(changeWallpaper, 5000);
+    // Auto Change
+    let interval = setInterval(() => {
+      if(autoChange){
+        nextWallpaper();
+      }
+    }, 5000);
+
+    // Pause / Resume
+    function toggleAuto(){
+      autoChange = !autoChange;
+
+      const btn = document.getElementById("autoBtn");
+
+      if(autoChange){
+        btn.innerHTML = "⏸ Pause";
+      }else{
+        btn.innerHTML = "▶ Resume";
+      }
+    }
+
+    // Initial Load
+    showWallpaper();
+
   </script>
 
 </body>
 </html>
-```
-
