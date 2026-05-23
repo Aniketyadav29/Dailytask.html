@@ -1,1 +1,92 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Automatic Wallpaper Changer</title>
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+    }
+
+    body{
+      height:100vh;
+      overflow:hidden;
+      font-family:Arial, sans-serif;
+      background-size:cover;
+      background-position:center;
+      background-repeat:no-repeat;
+      transition: background-image 1s ease-in-out;
+    }
+
+    .overlay{
+      width:100%;
+      height:100vh;
+      background:rgba(0,0,0,0.35);
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      flex-direction:column;
+      color:white;
+      text-align:center;
+    }
+
+    h1{
+      font-size:55px;
+      margin-bottom:10px;
+      text-shadow:2px 2px 10px black;
+    }
+
+    p{
+      font-size:20px;
+      text-shadow:1px 1px 5px black;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="overlay">
+    <h1>Automatic Wallpaper Changer</h1>
+    <p>Wallpaper changes every 5 seconds</p>
+  </div>
+
+  <script>
+    // List of wallpapers
+    const wallpapers = [
+      "https://picsum.photos/id/1015/1920/1080",
+      "https://picsum.photos/id/1016/1920/1080",
+      "https://picsum.photos/id/1018/1920/1080",
+      "https://picsum.photos/id/1020/1920/1080",
+      "https://picsum.photos/id/1024/1920/1080"
+    ];
+
+    let index = 0;
+
+    // Function to change wallpaper
+    function changeWallpaper() {
+      document.body.style.backgroundImage =
+        `url('${wallpapers[index]}')`;
+
+      index++;
+
+      if(index >= wallpapers.length){
+        index = 0;
+      }
+    }
+
+    // Initial wallpaper
+    changeWallpaper();
+
+    // Change every 5 seconds
+    setInterval(changeWallpaper, 5000);
+  </script>
+
+</body>
+</html>
+```
 
