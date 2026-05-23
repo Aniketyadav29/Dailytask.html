@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Advanced Automatic Wallpaper Changer</title>
+  <title>Professional Wallpaper Slider</title>
 
-  <!-- Google Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
     *{
@@ -16,135 +16,224 @@
     }
 
     body{
-      font-family:'Poppins', sans-serif;
-      height:100vh;
+      font-family:'Inter',sans-serif;
       overflow:hidden;
-      background-size:cover;
-      background-position:center;
-      background-repeat:no-repeat;
-      transition:background-image 1.5s ease-in-out;
-      position:relative;
+      background:#000;
+      height:100vh;
     }
 
-    /* Dark Overlay */
+    /* Background Slides */
+    .slider{
+      position:fixed;
+      inset:0;
+      width:100%;
+      height:100%;
+    }
+
+    .slide{
+      position:absolute;
+      inset:0;
+      background-size:cover;
+      background-position:center;
+      opacity:0;
+      transform:scale(1.08);
+      transition:
+        opacity 1.5s ease,
+        transform 7s ease;
+    }
+
+    .slide.active{
+      opacity:1;
+      transform:scale(1);
+      z-index:1;
+    }
+
+    /* Dark cinematic overlay */
     .overlay{
       position:absolute;
       inset:0;
-      background:linear-gradient(
-        rgba(0,0,0,0.35),
-        rgba(0,0,0,0.6)
-      );
+      background:
+        linear-gradient(
+          to bottom,
+          rgba(0,0,0,0.35),
+          rgba(0,0,0,0.55)
+        );
+      z-index:2;
+    }
+
+    /* Main Content */
+    .content{
+      position:relative;
+      z-index:3;
+      width:100%;
+      height:100vh;
       display:flex;
+      flex-direction:column;
       justify-content:center;
       align-items:center;
-      flex-direction:column;
       text-align:center;
       color:white;
       padding:20px;
     }
 
+    .badge{
+      padding:10px 18px;
+      border:1px solid rgba(255,255,255,0.18);
+      background:rgba(255,255,255,0.08);
+      backdrop-filter:blur(10px);
+      border-radius:50px;
+      font-size:14px;
+      letter-spacing:1px;
+      margin-bottom:25px;
+      animation:fadeIn 1.2s ease;
+    }
+
     h1{
-      font-size:65px;
+      font-size:72px;
       font-weight:700;
-      text-shadow:0 0 20px rgba(0,0,0,0.8);
-      animation:fadeIn 2s ease;
+      line-height:1.1;
+      letter-spacing:-2px;
+      max-width:900px;
+      animation:fadeUp 1s ease;
     }
 
     p{
-      margin-top:15px;
-      font-size:22px;
-      opacity:0.9;
-      animation:slideUp 2s ease;
+      margin-top:22px;
+      font-size:20px;
+      font-weight:300;
+      max-width:700px;
+      color:rgba(255,255,255,0.82);
+      line-height:1.8;
+      animation:fadeUp 1.4s ease;
     }
 
-    /* Glass Control Panel */
+    /* Controls */
     .controls{
       position:absolute;
-      bottom:30px;
+      bottom:40px;
       left:50%;
       transform:translateX(-50%);
+      z-index:5;
+
       display:flex;
-      gap:15px;
-      background:rgba(255,255,255,0.1);
-      backdrop-filter:blur(10px);
-      padding:15px 25px;
-      border-radius:20px;
-      box-shadow:0 8px 20px rgba(0,0,0,0.3);
+      align-items:center;
+      gap:18px;
+
+      padding:14px 22px;
+
+      background:rgba(255,255,255,0.08);
+      backdrop-filter:blur(18px);
+
+      border:1px solid rgba(255,255,255,0.12);
+      border-radius:18px;
     }
 
-    button{
+    .btn{
+      width:52px;
+      height:52px;
       border:none;
-      outline:none;
-      padding:12px 20px;
-      border-radius:12px;
-      font-size:16px;
-      font-weight:600;
+      border-radius:14px;
+
+      background:rgba(255,255,255,0.08);
+      color:white;
+
+      font-size:18px;
       cursor:pointer;
-      transition:0.3s;
-      color:white;
-      background:rgba(255,255,255,0.15);
-      backdrop-filter:blur(5px);
+
+      transition:0.3s ease;
     }
 
-    button:hover{
-      transform:scale(1.08);
-      background:rgba(255,255,255,0.25);
+    .btn:hover{
+      background:white;
+      color:black;
+      transform:translateY(-2px);
     }
 
-    /* Wallpaper Counter */
-    .counter{
+    /* Indicators */
+    .indicators{
+      display:flex;
+      gap:10px;
+    }
+
+    .dot{
+      width:10px;
+      height:10px;
+      border-radius:50%;
+      background:rgba(255,255,255,0.35);
+      transition:0.3s ease;
+    }
+
+    .dot.active{
+      width:34px;
+      border-radius:20px;
+      background:white;
+    }
+
+    /* Top Right Info */
+    .info{
       position:absolute;
-      top:25px;
-      right:25px;
-      background:rgba(0,0,0,0.35);
+      top:30px;
+      right:35px;
+      z-index:5;
+
       padding:12px 18px;
-      border-radius:15px;
+
+      background:rgba(255,255,255,0.08);
+      border:1px solid rgba(255,255,255,0.1);
+
+      backdrop-filter:blur(15px);
+
       color:white;
-      font-size:16px;
-      backdrop-filter:blur(8px);
+      border-radius:16px;
+      font-size:14px;
+      letter-spacing:0.5px;
     }
 
     /* Animations */
+    @keyframes fadeUp{
+      from{
+        opacity:0;
+        transform:translateY(40px);
+      }
+      to{
+        opacity:1;
+        transform:translateY(0);
+      }
+    }
+
     @keyframes fadeIn{
       from{
         opacity:0;
-        transform:translateY(-20px);
       }
       to{
         opacity:1;
-        transform:translateY(0);
       }
     }
 
-    @keyframes slideUp{
-      from{
-        opacity:0;
-        transform:translateY(20px);
-      }
-      to{
-        opacity:1;
-        transform:translateY(0);
-      }
-    }
-
-    /* Responsive */
+    /* Mobile Responsive */
     @media(max-width:768px){
+
       h1{
-        font-size:40px;
+        font-size:42px;
       }
 
       p{
-        font-size:18px;
+        font-size:16px;
       }
 
       .controls{
-        flex-wrap:wrap;
-        width:90%;
-        justify-content:center;
+        bottom:25px;
+        padding:12px 16px;
       }
 
-      button{
-        width:120px;
+      .btn{
+        width:46px;
+        height:46px;
+      }
+
+      .info{
+        top:18px;
+        right:18px;
       }
     }
 
@@ -153,85 +242,127 @@
 
 <body>
 
-  <div class="overlay">
-    <h1>Dynamic Wallpaper Changer</h1>
-    <p>Beautiful wallpapers change automatically every 5 seconds</p>
+  <!-- Background Slider -->
+  <div class="slider">
+
+    <div class="slide active"
+      style="background-image:url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1920');">
+    </div>
+
+    <div class="slide"
+      style="background-image:url('https://images.unsplash.com/photo-1493246507139-91e8fad9978e?q=80&w=1920');">
+    </div>
+
+    <div class="slide"
+      style="background-image:url('https://images.unsplash.com/photo-1470770841072-f978cf4d019e?q=80&w=1920');">
+    </div>
+
+    <div class="slide"
+      style="background-image:url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1920');">
+    </div>
+
   </div>
 
-  <div class="counter" id="counter">
-    Wallpaper 1 / 5
+  <!-- Overlay -->
+  <div class="overlay"></div>
+
+  <!-- Info -->
+  <div class="info">
+    Auto Changing Wallpaper
   </div>
 
-  <!-- Control Buttons -->
+  <!-- Main Content -->
+  <div class="content">
+
+    <div class="badge">
+      PREMIUM EXPERIENCE
+    </div>
+
+    <h1>
+      Dynamic Professional Wallpaper Slider
+    </h1>
+
+    <p>
+      Elegant fullscreen wallpaper transitions with cinematic animations,
+      glassmorphism controls, and responsive modern UI.
+    </p>
+
+  </div>
+
+  <!-- Controls -->
   <div class="controls">
-    <button onclick="prevWallpaper()">⏮ Previous</button>
-    <button onclick="toggleAuto()" id="autoBtn">⏸ Pause</button>
-    <button onclick="nextWallpaper()">⏭ Next</button>
+
+    <button class="btn" onclick="prevSlide()">❮</button>
+
+    <div class="indicators" id="indicators"></div>
+
+    <button class="btn" onclick="nextSlide()">❯</button>
+
   </div>
 
   <script>
 
-    // Wallpaper List
-    const wallpapers = [
-      "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1920",
-      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1920",
-      "https://images.unsplash.com/photo-1493246507139-91e8fad9978e?q=80&w=1920",
-      "https://images.unsplash.com/photo-1511884642898-4c92249e20b6?q=80&w=1920",
-      "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?q=80&w=1920"
-    ];
+    const slides = document.querySelectorAll('.slide');
+    const indicators = document.getElementById('indicators');
 
-    let index = 0;
-    let autoChange = true;
+    let current = 0;
 
-    // Change Wallpaper
-    function showWallpaper(){
-      document.body.style.backgroundImage =
-        `url('${wallpapers[index]}')`;
+    // Create indicators
+    slides.forEach((_, index) => {
 
-      document.getElementById("counter").innerText =
-        `Wallpaper ${index + 1} / ${wallpapers.length}`;
+      const dot = document.createElement('div');
+      dot.classList.add('dot');
+
+      if(index === 0){
+        dot.classList.add('active');
+      }
+
+      indicators.appendChild(dot);
+    });
+
+    const dots = document.querySelectorAll('.dot');
+
+    // Show slide
+    function showSlide(index){
+
+      slides.forEach(slide => {
+        slide.classList.remove('active');
+      });
+
+      dots.forEach(dot => {
+        dot.classList.remove('active');
+      });
+
+      slides[index].classList.add('active');
+      dots[index].classList.add('active');
     }
 
-    // Next Wallpaper
-    function nextWallpaper(){
-      index++;
-      if(index >= wallpapers.length){
-        index = 0;
+    // Next Slide
+    function nextSlide(){
+
+      current++;
+
+      if(current >= slides.length){
+        current = 0;
       }
-      showWallpaper();
+
+      showSlide(current);
     }
 
-    // Previous Wallpaper
-    function prevWallpaper(){
-      index--;
-      if(index < 0){
-        index = wallpapers.length - 1;
+    // Previous Slide
+    function prevSlide(){
+
+      current--;
+
+      if(current < 0){
+        current = slides.length - 1;
       }
-      showWallpaper();
+
+      showSlide(current);
     }
 
-    // Auto Change
-    let interval = setInterval(() => {
-      if(autoChange){
-        nextWallpaper();
-      }
-    }, 5000);
-
-    // Pause / Resume
-    function toggleAuto(){
-      autoChange = !autoChange;
-
-      const btn = document.getElementById("autoBtn");
-
-      if(autoChange){
-        btn.innerHTML = "⏸ Pause";
-      }else{
-        btn.innerHTML = "▶ Resume";
-      }
-    }
-
-    // Initial Load
-    showWallpaper();
+    // Auto Change Every 5 Seconds
+    setInterval(nextSlide, 5000);
 
   </script>
 
