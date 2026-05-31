@@ -1,160 +1,347 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Gravity Dodge</title>
-    <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-            background: #111;
-            font-family: Arial, sans-serif;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gravity Runner Pro</title>
 
-        canvas {
-            display: block;
-            margin: auto;
-            background: #222;
-            border: 2px solid white;
-        }
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
 
-        #score {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            color: white;
-            font-size: 24px;
-        }
-    </style>
+body{
+    overflow:hidden;
+    background:
+    radial-gradient(circle at center,#222,#000);
+    font-family:Arial,sans-serif;
+}
+
+canvas{
+    display:block;
+}
+
+#ui{
+    position:absolute;
+    top:15px;
+    left:15px;
+    color:white;
+    z-index:10;
+    font-size:22px;
+    text-shadow:0 0 10px cyan;
+}
+
+#help{
+    position:absolute;
+    top:15px;
+    right:15px;
+    color:#ddd;
+    font-size:16px;
+    text-align:right;
+}
+</style>
 </head>
+
 <body>
 
-<div id="score">Score: 0</div>
-<canvas id="game" width="800" height="400"></canvas>
+<div id="ui">
+    Score: <span id="score">0</span><br>
+    High Score: <span id="high">0</span>
+</div>
+
+<div id="help">
+    SPACE / TAP = Flip Gravity<br>
+    P = Pause<br>
+    ENTER = Restart
+</div>
+
+<canvas id="game"></canvas>
 
 <script>
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
-const scoreText = document.getElementById("score");
 
-let score = 0;
-let gameOver = false;
+function resize(){
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener("resize",resize);
 
-const player = {
-    x: 100,
-    y: 350,
-    radius: 15,
-    gravity: 1,
-    velocity: 0
+const scoreEl = document.getElementById("score");
+const highEl = document.getElementById("high");
+
+let score=0;
+let highScore=localStorage.getItem("gravityHigh") || 0;
+highEl.textContent=highScore;
+
+let gameOver=false;
+let paused=false;
+
+const player={
+    x:150,
+    y:200,
+    r:18,
+    vy:0,
+    gravity:1
 };
 
-const obstacles = [];
+let particles=[];
+let obstacles=[];
+let obstacleTimer=0;
+let gameSpeed=350;
 
-function createObstacle() {
-    const gapY = Math.random() * 200 + 50;
+function createObstacle(){
+    let gap=180;
+    let top=Math.random()*(canvas.height-gap-150)+50;
 
     obstacles.push({
-        x: canvas.width,
-        width: 40,
-        topHeight: gapY,
-        bottomY: gapY + 120
+        x:canvas.width+100,
+        width:60,
+        topHeight:top,
+        bottomY:top+gap,
+        scored:false
     });
 }
 
-setInterval(() => {
-    if (!gameOver) createObstacle();
-}, 1500);
+function createParticles(x,y){
+    for(let i=0;i<15;i++){
+        particles.push({
+            x:x,
+            y:y,
+            vx:(Math.random()-0.5)*8,
+            vy:(Math.random()-0.5)*8,
+            life:40
+        });
+    }
+}
 
-document.addEventListener("keydown", (e) => {
-    if (e.code === "Space") {
-        player.gravity *= -1;
+function flipGravity(){
+    if(gameOver) return;
+    player.gravity*=-1;
+    player.vy*=0.8;
+    createParticles(player.x,player.y);
+}
+
+document.addEventListener("keydown",(e)=>{
+
+    if(e.code==="Space"){
+        flipGravity();
     }
 
-    if (gameOver && e.code === "Enter") {
+    if(e.key==="p" || e.key==="P"){
+        paused=!paused;
+    }
+
+    if(gameOver && e.key==="Enter"){
         location.reload();
     }
 });
 
-function update() {
-    if (gameOver) return;
+document.addEventListener("touchstart",()=>{
+    flipGravity();
+});
 
-    player.velocity += 0.5 * player.gravity;
-    player.y += player.velocity;
+let lastTime=0;
 
-    if (player.y > canvas.height - player.radius) {
-        player.y = canvas.height - player.radius;
-        player.velocity = 0;
+function update(delta){
+
+    if(gameOver || paused) return;
+
+    gameSpeed=350+(score*12);
+
+    player.vy+=1500*player.gravity*delta;
+    player.y+=player.vy*delta;
+
+    if(player.y-player.r<0){
+        player.y=player.r;
+        player.vy=0;
     }
 
-    if (player.y < player.radius) {
-        player.y = player.radius;
-        player.velocity = 0;
+    if(player.y+player.r>canvas.height){
+        player.y=canvas.height-player.r;
+        player.vy=0;
     }
 
-    for (let i = obstacles.length - 1; i >= 0; i--) {
-        let ob = obstacles[i];
-        ob.x -= 5;
+    obstacleTimer+=delta;
 
-        if (
-            player.x + player.radius > ob.x &&
-            player.x - player.radius < ob.x + ob.width
-        ) {
-            if (
-                player.y - player.radius < ob.topHeight ||
-                player.y + player.radius > ob.bottomY
-            ) {
-                gameOver = true;
+    if(obstacleTimer>1.5){
+        obstacleTimer=0;
+        createObstacle();
+    }
+
+    for(let i=obstacles.length-1;i>=0;i--){
+
+        let o=obstacles[i];
+
+        o.x-=gameSpeed*delta;
+
+        if(!o.scored && o.x+o.width<player.x){
+            score++;
+            scoreEl.textContent=score;
+
+            if(score>highScore){
+                highScore=score;
+                highEl.textContent=highScore;
+                localStorage.setItem("gravityHigh",highScore);
+            }
+
+            o.scored=true;
+        }
+
+        if(
+           player.x+player.r>o.x &&
+           player.x-player.r<o.x+o.width
+        ){
+
+            if(
+                player.y-player.r<o.topHeight ||
+                player.y+player.r>o.bottomY
+            ){
+                gameOver=true;
             }
         }
 
-        if (ob.x + ob.width < 0) {
-            obstacles.splice(i, 1);
-            score++;
-            scoreText.innerText = "Score: " + score;
+        if(o.x+o.width<0){
+            obstacles.splice(i,1);
+        }
+    }
+
+    for(let i=particles.length-1;i>=0;i--){
+
+        let p=particles[i];
+
+        p.x+=p.vx;
+        p.y+=p.vy;
+        p.life--;
+
+        if(p.life<=0){
+            particles.splice(i,1);
         }
     }
 }
 
-function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+function drawBackground(){
 
-    ctx.fillStyle = "deepskyblue";
-    ctx.beginPath();
-    ctx.arc(player.x, player.y, player.radius, 0, Math.PI * 2);
-    ctx.fill();
+    let grad=ctx.createLinearGradient(
+        0,0,canvas.width,canvas.height
+    );
 
-    ctx.fillStyle = "red";
-    obstacles.forEach(ob => {
-        ctx.fillRect(ob.x, 0, ob.width, ob.topHeight);
+    grad.addColorStop(0,"#050510");
+    grad.addColorStop(1,"#000");
+
+    ctx.fillStyle=grad;
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    for(let i=0;i<100;i++){
+        ctx.fillStyle="rgba(255,255,255,0.2)";
         ctx.fillRect(
-            ob.x,
-            ob.bottomY,
-            ob.width,
-            canvas.height - ob.bottomY
-        );
-    });
-
-    if (gameOver) {
-        ctx.fillStyle = "white";
-        ctx.font = "40px Arial";
-        ctx.fillText("GAME OVER", 270, 180);
-
-        ctx.font = "22px Arial";
-        ctx.fillText(
-            "Press ENTER to Restart",
-            260,
-            230
+            (i*137)%canvas.width,
+            (i*79)%canvas.height,
+            2,2
         );
     }
 }
 
-function gameLoop() {
-    update();
+function draw(){
+
+    drawBackground();
+
+    obstacles.forEach(o=>{
+
+        ctx.shadowBlur=20;
+        ctx.shadowColor="red";
+
+        ctx.fillStyle="#ff2e63";
+
+        ctx.fillRect(
+            o.x,
+            0,
+            o.width,
+            o.topHeight
+        );
+
+        ctx.fillRect(
+            o.x,
+            o.bottomY,
+            o.width,
+            canvas.height-o.bottomY
+        );
+    });
+
+    particles.forEach(p=>{
+
+        ctx.shadowBlur=10;
+        ctx.shadowColor="cyan";
+
+        ctx.fillStyle=
+        "rgba(0,255,255,"+(p.life/40)+")";
+
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,3,0,Math.PI*2);
+        ctx.fill();
+    });
+
+    ctx.shadowBlur=30;
+    ctx.shadowColor="cyan";
+
+    ctx.fillStyle="deepskyblue";
+
+    ctx.beginPath();
+    ctx.arc(
+        player.x,
+        player.y,
+        player.r,
+        0,
+        Math.PI*2
+    );
+    ctx.fill();
+
+    if(paused){
+
+        ctx.fillStyle="white";
+        ctx.font="60px Arial";
+        ctx.fillText(
+            "PAUSED",
+            canvas.width/2-120,
+            canvas.height/2
+        );
+    }
+
+    if(gameOver){
+
+        ctx.fillStyle="white";
+        ctx.font="70px Arial";
+        ctx.fillText(
+            "GAME OVER",
+            canvas.width/2-220,
+            canvas.height/2-20
+        );
+
+        ctx.font="30px Arial";
+        ctx.fillText(
+            "Press ENTER to Restart",
+            canvas.width/2-170,
+            canvas.height/2+50
+        );
+    }
+}
+
+function gameLoop(time){
+
+    let delta=(time-lastTime)/1000;
+    lastTime=time;
+
+    update(delta);
     draw();
+
     requestAnimationFrame(gameLoop);
 }
 
-gameLoop();
-</script>
+requestAnimationFrame(gameLoop);
 
+</script>
 </body>
 </html>
