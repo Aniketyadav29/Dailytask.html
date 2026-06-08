@@ -3,141 +3,195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Examination Hall Ticket</title>
-    <!-- Load Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Configure Tailwind for custom theme and Inter font -->
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'primary-blue': '#1e3a8a',
-                        'secondary-gray': '#f1f5f9',
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                }
-            }
-        }
-    </script>
-    <!-- Set default font to Inter -->
+    <title>BBD Group of Institutions | Education to Envision</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #e2e8f0; /* Subtle light blue-gray background */
+        :root {
+            --bbd-blue: #002e63; 
+            --bbd-gold: #ffcc00; 
+            --bbd-dark: #1a1a1a;
+            --light: #f4f7f6;
+            --white: #ffffff;
         }
+
+        html { scroll-behavior: smooth; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { line-height: 1.6; color: var(--bbd-dark); }
+
+        header {
+            position: fixed;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 8%;
+            z-index: 1000;
+            background: rgba(0, 46, 99, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 3px solid var(--bbd-gold);
+        }
+
+        .logo { color: white; font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: bold; }
+        .logo span { color: var(--bbd-gold); }
+
+        nav ul { display: flex; list-style: none; }
+        nav ul li { margin: 0 15px; }
+        nav ul li a {
+            color: white; text-decoration: none; font-size: 0.85rem; font-weight: 500;
+            transition: 0.3s; text-transform: uppercase; letter-spacing: 1px;
+        }
+        nav ul li a:hover { color: var(--bbd-gold); }
+
+        .hero {
+            height: 80vh;
+            background: linear-gradient(rgba(0, 46, 99, 0.7), rgba(0, 0, 0, 0.5)), 
+                        url('https://images.unsplash.com/photo-1541339907198-e08756ebafe3?auto=format&fit=crop&w=1920&q=80');
+            background-size: cover; background-position: center;
+            display: flex; flex-direction: column; justify-content: center;
+            align-items: center; color: white; text-align: center;
+        }
+
+        .hero h1 { font-family: 'Playfair Display', serif; font-size: 3.5rem; margin-bottom: 10px; }
+        .btn { padding: 12px 30px; border-radius: 4px; text-decoration: none; font-weight: 600; display: inline-block; }
+        .btn-primary { background: var(--bbd-gold); color: var(--bbd-blue); }
+
+        .section-padding { padding: 80px 10%; }
+        .text-center { text-align: center; }
+
+        .message-box {
+            display: flex; align-items: center; gap: 50px; background: var(--light);
+            border-radius: 15px; padding: 40px; margin-top: 30px;
+        }
+        .message-img { width: 300px; height: 350px; object-fit: cover; border-radius: 10px; border: 5px solid var(--white); }
+
+        .events-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 40px;
+        }
+        .event-card { background: var(--white); border: 1px solid #eee; overflow: hidden; transition: 0.3s; }
+        .event-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .event-info { padding: 20px; }
+        .date { color: var(--bbd-gold); font-weight: bold; font-size: 0.9rem; }
+
+        .partners-bar { background: #f9f9f9; padding: 40px 0; overflow: hidden; white-space: nowrap; }
+        .partners-track { display: inline-block; animation: scroll 20s linear infinite; }
+        .partners-track span { font-size: 1.5rem; font-weight: bold; color: #ccc; margin: 0 50px; text-transform: uppercase; }
+
+        @keyframes scroll {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
+
+        .map-section iframe { width: 100%; height: 350px; border: none; display: block; }
+
+        footer { background: var(--bbd-blue); color: white; padding: 60px 10% 20px; }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px; margin-bottom: 40px; }
+        .footer-col h4 { color: var(--bbd-gold); margin-bottom: 20px; }
+        .footer-col p, .footer-col li { font-size: 0.9rem; opacity: 0.8; list-style: none; margin-bottom: 10px; }
     </style>
 </head>
-<body class="p-4 sm:p-8 flex justify-center items-start min-h-screen">
+<body>
 
-    <!-- Hall Ticket Container -->
-    <div class="w-full max-w-4xl bg-white shadow-2xl rounded-xl overflow-hidden border-t-8 border-primary-blue transition-all duration-300">
-
-        <!-- Header Section -->
-        <header class="bg-primary-blue text-white p-4 sm:p-6 text-center">
-            <h1 class="text-xl sm:text-3xl font-extrabold tracking-tight">NATIONAL EXAMINATION BOARD</h1>
-            <p class="text-sm sm:text-lg mt-1 font-light">ADMISSION CERTIFICATE / HALL TICKET</p>
-        </header>
-
-        <!-- Main Content Grid -->
-        <div class="p-4 sm:p-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-            <!-- Candidate Details & Photo (Column 1) -->
-            <div class="lg:col-span-2 space-y-4">
-                <h2 class="text-lg sm:text-xl font-bold text-primary-blue border-b-2 border-primary-blue pb-2">CANDIDATE DETAILS</h2>
-
-                <div class="grid grid-cols-2 gap-4 text-sm sm:text-base">
-                    <div class="col-span-2 sm:col-span-1">
-                        <p class="font-semibold text-gray-500">Candidate Name:</p>
-                        <p class="font-bold text-gray-800">ALEXANDER J. CHEN</p>
-                    </div>
-                    <div class="col-span-2 sm:col-span-1">
-                        <p class="font-semibold text-gray-500">Roll Number:</p>
-                        <p class="font-bold text-red-600 text-lg">2024NEB-987654</p>
-                    </div>
-                    <div class="col-span-2 sm:col-span-1">
-                        <p class="font-semibold text-gray-500">Date of Birth:</p>
-                        <p class="font-medium text-gray-700">15/05/2002</p>
-                    </div>
-                    <div class="col-span-2 sm:col-span-1">
-                        <p class="font-semibold text-gray-500">Category:</p>
-                        <p class="font-medium text-gray-700">General</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Photo and Signature Box (Column 2/3) -->
-            <div class="lg:col-span-1 flex flex-col items-center justify-start space-y-3 p-4 bg-secondary-gray rounded-lg border border-gray-300">
-                <div class="w-24 h-28 sm:w-32 sm:h-36 bg-gray-200 border-2 border-gray-400 flex items-center justify-center rounded-md overflow-hidden">
-                    <!-- Placeholder for Candidate Photo -->
-                    <img src="https://placehold.co/128x144/cbd5e1/1e3a8a?text=PHOTO" alt="Candidate Photo" class="w-full h-full object-cover">
-                </div>
-                <div class="w-full text-center mt-2">
-                    <p class="text-xs text-gray-500">Candidate Signature (Must match ID proof)</p>
-                    <div class="h-8 border-b border-gray-400 bg-white/50 w-full flex justify-center items-center text-sm italic text-gray-600">
-                        A. Chen
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Examination Details Section -->
-        <div class="p-4 sm:p-8 pt-0 sm:pt-0">
-            <h2 class="text-lg sm:text-xl font-bold text-primary-blue border-b-2 border-primary-blue pb-2 mt-4">EXAMINATION & CENTER DETAILS</h2>
-
-            <div class="bg-blue-50/70 p-4 rounded-lg mt-4 shadow-inner">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm sm:text-base">
-                    <!-- Exam Info -->
-                    <div>
-                        <p class="font-semibold text-gray-500">Examination:</p>
-                        <p class="text-gray-800 font-bold">Graduate Aptitude Test - 2024</p>
-                    </div>
-                    <div>
-                        <p class="font-semibold text-gray-500">Exam Date & Time:</p>
-                        <p class="text-gray-800 font-bold">Sunday, December 8, 2024 | 10:00 AM - 1:00 PM</p>
-                    </div>
-                    <!-- Center Info -->
-                    <div class="md:col-span-2 mt-2">
-                        <p class="font-semibold text-gray-500">Examination Center Name:</p>
-                        <p class="text-gray-800 font-bold">Tech Park Assessment Center, Block C</p>
-                    </div>
-                    <div class="md:col-span-2">
-                        <p class="font-semibold text-gray-500">Center Address:</p>
-                        <p class="text-gray-800 font-medium">101, Innovation Drive, Cyber City, Metropolis - 123456</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-        <!-- Important Instructions Section -->
-        <div class="bg-gray-100 p-4 sm:p-8 border-t border-gray-200">
-            <h2 class="text-lg sm:text-xl font-bold text-red-700 mb-3">IMPORTANT INSTRUCTIONS</h2>
-            <ul class="list-disc list-inside text-sm sm:text-base space-y-2 text-gray-700">
-                <li class="pl-2">The candidate must report to the examination center at least 60 minutes before the commencement of the exam.</li>
-                <li class="pl-2">Carry a printout of this Hall Ticket and a valid Government Photo ID (Aadhaar/Passport/Driving License).</li>
-                <li class="pl-2">Mobile phones, electronic gadgets, books, and loose papers are strictly prohibited inside the examination hall.</li>
-                <li class="pl-2 font-semibold text-red-800">Strictly follow all COVID-19 safety protocols mandated by the center authorities.</li>
+    <header>
+        <div class="logo">BBD<span>UNIVERSITY</span></div>
+        <nav>
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">Director's Desk</a></li>
+                <li><a href="#events">Events</a></li>
+                <li><a href="#location">Contact</a></li>
             </ul>
-        </div>
+        </nav>
+    </header>
 
-        <!-- Footer / Official Use Section -->
-        <footer class="p-4 sm:p-6 bg-primary-blue/5 border-t border-primary-blue/10 flex justify-between items-end text-xs sm:text-sm">
-            <div class="space-y-1">
-                <p class="font-semibold text-gray-600">Official Seal & Signature of Controller of Examinations</p>
-                <div class="w-32 h-16 sm:w-40 sm:h-20 border-2 border-gray-400 bg-white flex items-end justify-center rounded-md">
-                    <span class="text-gray-400 italic text-xs mb-1">Office Use Only</span>
+    <section id="home" class="hero">
+        <h1>Building Tomorrow's Leaders</h1>
+        <p>A premier destination for technical and management education in Northern India.</p>
+        <br>
+        <a href="#" class="btn btn-primary">Admissions Open 2026</a>
+    </section>
+
+    <section id="about" class="section-padding">
+        <div class="text-center">
+            <h2 style="font-family: 'Playfair Display', serif; font-size: 2.5rem;">From the Director's Desk</h2>
+        </div>
+        <div class="message-box">
+            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80" alt="Director" class="message-img">
+            <div>
+                <h3 style="color: var(--bbd-blue);">Dr. Akhilesh Das Gupta</h3>
+                <p style="font-style: italic; color: #777; margin-bottom: 15px;">Founder Chairman</p>
+                <p>"Our vision is to provide an environment that encourages the spirit of inquiry and innovation. At BBD, we don't just teach subjects; we build character and professional ethics. We welcome you to be a part of this journey toward excellence."</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="partners-bar">
+        <div class="partners-track">
+            <span>GOOGLE</span> <span>MICROSOFT</span> <span>TATA MOTORS</span> <span>WIPRO</span> <span>INFOSYS</span> <span>AMAZON</span> <span>HCL</span> <span>COGNIZANT</span>
+            <span>GOOGLE</span> <span>MICROSOFT</span> <span>TATA MOTORS</span> <span>WIPRO</span> <span>INFOSYS</span> <span>AMAZON</span> <span>HCL</span> <span>COGNIZANT</span>
+        </div>
+    </section>
+
+    <section id="events" class="section-padding" style="background: #fff;">
+        <div class="text-center">
+            <h2 style="font-family: 'Playfair Display', serif; font-size: 2.5rem;">Campus Life & Events</h2>
+            <p>Stay updated with the latest happenings at BBD</p>
+        </div>
+        <div class="events-grid">
+            <div class="event-card">
+                <img src="https://images.unsplash.com/photo-1523580494863-6f3031224c94?auto=format&fit=crop&w=400&q=80" style="width: 100%" alt="Convocation">
+                <div class="event-info">
+                    <p class="date">March 15, 2026</p>
+                    <h4>Annual Convocation 2026</h4>
+                    <p>Celebrating the success of our graduating batch with distinguished guests.</p>
                 </div>
             </div>
-            <div class="text-right">
-                <p class="font-semibold text-gray-700">Issuance Date:</p>
-                <p class="font-medium text-gray-600">25th November 2024</p>
-                <p class="text-xs text-gray-500 mt-1">Visit www.neboard.edu for updates.</p>
+            <div class="event-card">
+                <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=400&q=80" style="width: 100%" alt="Tech Fest">
+                <div class="event-info">
+                    <p class="date">April 02, 2026</p>
+                    <h4>Utkarsh: The Mega Tech-Fest</h4>
+                    <p>Three days of innovation, robotics, and coding competitions.</p>
+                </div>
             </div>
-        </footer>
-    </div>
+            <div class="event-card">
+                <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=400&q=80" style="width: 100%" alt="Seminar">
+                <div class="event-info">
+                    <p class="date">May 10, 2026</p>
+                    <h4>Global HR Summit</h4>
+                    <p>Connecting students with HR leaders from Fortune 500 companies.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="location" class="map-section">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3558.756269661448!2d81.0483864!3d26.8874284!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x399be26555555555%3A0x7d6c8e31a1900ad4!2sBabu%20Banarasi%20Das%20University!5e0!3m2!1sen!2sin!4v1700000000000"></iframe>
+    </section>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-col">
+                <h2 style="font-family: 'Playfair Display', serif;">BBD Group</h2>
+                <p>Establishing benchmarks in education for over two decades. Our campus provides world-class infrastructure and a nurturing environment for academic growth.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Quick Links</h4>
+                <li>Examination Cell</li>
+                <li>Scholarships</li>
+                <li>Library Portal</li>
+                <li>E-Cell & Startups</li>
+            </div>
+            <div class="footer-col">
+                <h4>Contact Info</h4>
+                <p>BBD City, Faizabad Road, Lucknow, Uttar Pradesh - 226028</p>
+                <p>Phone: +91 0522 6196222</p>
+                <p>Email: info@bbdu.ac.in</p>
+            </div>
+        </div>
+        <div class="text-center" style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; font-size: 0.8rem; opacity: 0.6;">
+            &copy; 2026 Babu Banarasi Das Group of Institutions. All Rights Reserved.
+        </div>
+    </footer>
 
 </body>
 </html>
