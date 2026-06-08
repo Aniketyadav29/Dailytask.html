@@ -1,1 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examination Hall Ticket</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Configure Tailwind for custom theme and Inter font -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-blue': '#1e3a8a',
+                        'secondary-gray': '#f1f5f9',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <!-- Set default font to Inter -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #e2e8f0; /* Subtle light blue-gray background */
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8 flex justify-center items-start min-h-screen">
 
+    <!-- Hall Ticket Container -->
+    <div class="w-full max-w-4xl bg-white shadow-2xl rounded-xl overflow-hidden border-t-8 border-primary-blue transition-all duration-300">
+
+        <!-- Header Section -->
+        <header class="bg-primary-blue text-white p-4 sm:p-6 text-center">
+            <h1 class="text-xl sm:text-3xl font-extrabold tracking-tight">NATIONAL EXAMINATION BOARD</h1>
+            <p class="text-sm sm:text-lg mt-1 font-light">ADMISSION CERTIFICATE / HALL TICKET</p>
+        </header>
+
+        <!-- Main Content Grid -->
+        <div class="p-4 sm:p-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <!-- Candidate Details & Photo (Column 1) -->
+            <div class="lg:col-span-2 space-y-4">
+                <h2 class="text-lg sm:text-xl font-bold text-primary-blue border-b-2 border-primary-blue pb-2">CANDIDATE DETAILS</h2>
+
+                <div class="grid grid-cols-2 gap-4 text-sm sm:text-base">
+                    <div class="col-span-2 sm:col-span-1">
+                        <p class="font-semibold text-gray-500">Candidate Name:</p>
+                        <p class="font-bold text-gray-800">ALEXANDER J. CHEN</p>
+                    </div>
+                    <div class="col-span-2 sm:col-span-1">
+                        <p class="font-semibold text-gray-500">Roll Number:</p>
+                        <p class="font-bold text-red-600 text-lg">2024NEB-987654</p>
+                    </div>
+                    <div class="col-span-2 sm:col-span-1">
+                        <p class="font-semibold text-gray-500">Date of Birth:</p>
+                        <p class="font-medium text-gray-700">15/05/2002</p>
+                    </div>
+                    <div class="col-span-2 sm:col-span-1">
+                        <p class="font-semibold text-gray-500">Category:</p>
+                        <p class="font-medium text-gray-700">General</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Photo and Signature Box (Column 2/3) -->
+            <div class="lg:col-span-1 flex flex-col items-center justify-start space-y-3 p-4 bg-secondary-gray rounded-lg border border-gray-300">
+                <div class="w-24 h-28 sm:w-32 sm:h-36 bg-gray-200 border-2 border-gray-400 flex items-center justify-center rounded-md overflow-hidden">
+                    <!-- Placeholder for Candidate Photo -->
+                    <img src="https://placehold.co/128x144/cbd5e1/1e3a8a?text=PHOTO" alt="Candidate Photo" class="w-full h-full object-cover">
+                </div>
+                <div class="w-full text-center mt-2">
+                    <p class="text-xs text-gray-500">Candidate Signature (Must match ID proof)</p>
+                    <div class="h-8 border-b border-gray-400 bg-white/50 w-full flex justify-center items-center text-sm italic text-gray-600">
+                        A. Chen
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Examination Details Section -->
+        <div class="p-4 sm:p-8 pt-0 sm:pt-0">
+            <h2 class="text-lg sm:text-xl font-bold text-primary-blue border-b-2 border-primary-blue pb-2 mt-4">EXAMINATION & CENTER DETAILS</h2>
+
+            <div class="bg-blue-50/70 p-4 rounded-lg mt-4 shadow-inner">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm sm:text-base">
+                    <!-- Exam Info -->
+                    <div>
+                        <p class="font-semibold text-gray-500">Examination:</p>
+                        <p class="text-gray-800 font-bold">Graduate Aptitude Test - 2024</p>
+                    </div>
+                    <div>
+                        <p class="font-semibold text-gray-500">Exam Date & Time:</p>
+                        <p class="text-gray-800 font-bold">Sunday, December 8, 2024 | 10:00 AM - 1:00 PM</p>
+                    </div>
+                    <!-- Center Info -->
+                    <div class="md:col-span-2 mt-2">
+                        <p class="font-semibold text-gray-500">Examination Center Name:</p>
+                        <p class="text-gray-800 font-bold">Tech Park Assessment Center, Block C</p>
+                    </div>
+                    <div class="md:col-span-2">
+                        <p class="font-semibold text-gray-500">Center Address:</p>
+                        <p class="text-gray-800 font-medium">101, Innovation Drive, Cyber City, Metropolis - 123456</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Important Instructions Section -->
+        <div class="bg-gray-100 p-4 sm:p-8 border-t border-gray-200">
+            <h2 class="text-lg sm:text-xl font-bold text-red-700 mb-3">IMPORTANT INSTRUCTIONS</h2>
+            <ul class="list-disc list-inside text-sm sm:text-base space-y-2 text-gray-700">
+                <li class="pl-2">The candidate must report to the examination center at least 60 minutes before the commencement of the exam.</li>
+                <li class="pl-2">Carry a printout of this Hall Ticket and a valid Government Photo ID (Aadhaar/Passport/Driving License).</li>
+                <li class="pl-2">Mobile phones, electronic gadgets, books, and loose papers are strictly prohibited inside the examination hall.</li>
+                <li class="pl-2 font-semibold text-red-800">Strictly follow all COVID-19 safety protocols mandated by the center authorities.</li>
+            </ul>
+        </div>
+
+        <!-- Footer / Official Use Section -->
+        <footer class="p-4 sm:p-6 bg-primary-blue/5 border-t border-primary-blue/10 flex justify-between items-end text-xs sm:text-sm">
+            <div class="space-y-1">
+                <p class="font-semibold text-gray-600">Official Seal & Signature of Controller of Examinations</p>
+                <div class="w-32 h-16 sm:w-40 sm:h-20 border-2 border-gray-400 bg-white flex items-end justify-center rounded-md">
+                    <span class="text-gray-400 italic text-xs mb-1">Office Use Only</span>
+                </div>
+            </div>
+            <div class="text-right">
+                <p class="font-semibold text-gray-700">Issuance Date:</p>
+                <p class="font-medium text-gray-600">25th November 2024</p>
+                <p class="text-xs text-gray-500 mt-1">Visit www.neboard.edu for updates.</p>
+            </div>
+        </footer>
+    </div>
+
+</body>
+</html>
