@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neon Orb Catcher</title>
+    <title>Neon Orb Catcher - Enhanced</title>
     <style>
-        /* Base Styling */
         body {
             margin: 0;
             padding: 0;
-            background-color: #0f0f13;
+            background-color: #0d0d12;
             color: #fff;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
@@ -18,179 +17,264 @@
             justify-content: center;
             height: 100vh;
             overflow: hidden;
+            user-select: none;
         }
 
-        /* Game Board Container */
         #game-container {
             position: relative;
             width: 400px;
             height: 500px;
-            background: #1a1a24;
-            border: 2px solid #333;
-            border-radius: 15px;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
+            background: #161620;
+            border: 2px solid #2a2a3d;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(0,255,204,0.05);
             overflow: hidden;
         }
 
-        /* Top Score/Time Bar */
+        /* Timer Bar */
+        #timer-bar-container {
+            width: 100%;
+            height: 6px;
+            background: #333;
+        }
+
+        #timer-bar {
+            height: 100%;
+            width: 100%;
+            background: #00ffcc;
+            transition: width 1s linear, background-color 0.5s;
+        }
+
         .header {
             display: flex;
             justify-content: space-between;
             padding: 15px 20px;
-            background: #252533;
-            border-bottom: 2px solid #333;
-            font-size: 1.2rem;
+            background: #1c1c28;
+            border-bottom: 2px solid #2a2a3d;
+            font-size: 1.5rem;
             font-weight: bold;
         }
 
-        #time { color: #ff007f; }
-        #score { color: #00ffcc; }
+        #score { color: #00ffcc; text-shadow: 0 0 10px rgba(0,255,204,0.5); }
 
-        /* The Interactive Target */
         #orb {
             position: absolute;
-            width: 40px;
-            height: 40px;
-            background: #00ffcc;
+            width: 45px;
+            height: 45px;
+            background: radial-gradient(circle, #fff, #00ffcc);
             border-radius: 50%;
             box-shadow: 0 0 15px #00ffcc, 0 0 30px #00ffcc;
             cursor: crosshair;
-            transition: left 0.1s ease, top 0.1s ease, transform 0.1s;
+            transition: left 0.1s ease-out, top 0.1s ease-out, width 0.2s, height 0.2s;
+            transform: translate(-50%, -50%); /* Centers the orb on its coordinates */
         }
 
-        #orb:active {
-            transform: scale(0.8);
+        #orb:active { filter: brightness(1.5); }
+
+        /* Particle Effects */
+        .particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #00ffcc;
+            border-radius: 50%;
+            pointer-events: none;
+            box-shadow: 0 0 10px #00ffcc;
+            animation: explode 0.4s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
         }
 
-        /* Controls */
+        @keyframes explode {
+            0% { transform: scale(1) translate(0, 0); opacity: 1; }
+            100% { transform: scale(0) translate(var(--tx), var(--ty)); opacity: 0; }
+        }
+
         .btn {
-            margin-top: 25px;
-            padding: 12px 35px;
-            font-size: 1.1rem;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 15px 40px;
+            font-size: 1.2rem;
             font-weight: bold;
             background: #ff007f;
             color: #fff;
             border: none;
-            border-radius: 8px;
+            border-radius: 30px;
             cursor: pointer;
-            box-shadow: 0 0 15px #ff007f;
+            box-shadow: 0 0 20px rgba(255, 0, 127, 0.6);
             transition: transform 0.1s, box-shadow 0.2s;
+            z-index: 10;
         }
 
-        .btn:hover {
-            box-shadow: 0 0 25px #ff007f;
-        }
+        .btn:hover { box-shadow: 0 0 30px rgba(255, 0, 127, 0.9); }
+        .btn:active { transform: translate(-50%, -50%) scale(0.95); }
 
-        .btn:active {
-            transform: scale(0.95);
+        /* Screen Shake */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
         }
-
-        /* Developer Credit */
-        .footer {
-            margin-top: 20px;
-            font-size: 0.85rem;
-            color: #555;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-        }
+        .shake-active { animation: shake 0.2s; }
     </style>
 </head>
 <body>
 
-    <h1 style="color: #00ffcc; text-shadow: 0 0 15px #00ffcc; letter-spacing: 2px;">Neon Orb Catcher</h1>
+    <h1 style="color: #fff; letter-spacing: 2px;">NEON <span style="color:#00ffcc; text-shadow: 0 0 15px #00ffcc;">ORB</span> CATCHER</h1>
 
     <div id="game-container">
+        <div id="timer-bar-container">
+            <div id="timer-bar"></div>
+        </div>
         <div class="header">
             <span>Score: <span id="score">0</span></span>
-            <span>Time: <span id="time">30</span>s</span>
         </div>
+        
+        <button class="btn" id="start-btn">PLAY</button>
         <div id="orb" style="display: none;"></div>
     </div>
-
-    <button class="btn" id="start-btn">Start Game</button>
-    
-    <div class="footer">Creative Build by Aniket Yadav | BBD</div>
 
     <script>
         const orb = document.getElementById('orb');
         const scoreDisplay = document.getElementById('score');
-        const timeDisplay = document.getElementById('time');
         const startBtn = document.getElementById('start-btn');
         const container = document.getElementById('game-container');
+        const timerBar = document.getElementById('timer-bar');
 
         let score = 0;
         let timeLeft = 30;
+        let totalTime = 30;
         let gameInterval;
         let timerInterval;
+        
+        // --- Audio System (Synthesizer) ---
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function playSound(type) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
 
+            if (type === 'pop') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.1);
+            } else if (type === 'gameover') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.5);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.5);
+            }
+        }
+
+        // --- Particle System ---
+        function createParticles(x, y) {
+            for (let i = 0; i < 8; i++) {
+                const p = document.createElement('div');
+                p.classList.add('particle');
+                p.style.left = `${x}px`;
+                p.style.top = `${y}px`;
+                
+                const angle = Math.random() * Math.PI * 2;
+                const distance = Math.random() * 40 + 20;
+                p.style.setProperty('--tx', `${Math.cos(angle) * distance}px`);
+                p.style.setProperty('--ty', `${Math.sin(angle) * distance}px`);
+                
+                container.appendChild(p);
+                setTimeout(() => p.remove(), 400); // Clean up DOM
+            }
+        }
+
+        // --- Game Logic ---
         function startGame() {
-            // Reset variables
             score = 0;
-            timeLeft = 30;
+            timeLeft = totalTime;
             scoreDisplay.textContent = score;
-            timeDisplay.textContent = timeLeft;
             
-            // Toggle UI elements
+            // Reset UI
             startBtn.style.display = 'none';
             orb.style.display = 'block';
+            orb.style.width = '45px';
+            orb.style.height = '45px';
+            timerBar.style.width = '100%';
+            timerBar.style.backgroundColor = '#00ffcc';
 
             moveOrb();
             
-            // Start Countdown Timer
+            // Smooth Timer Bar Countdown
             timerInterval = setInterval(() => {
-                timeLeft--;
-                timeDisplay.textContent = timeLeft;
-                if (timeLeft <= 0) {
-                    endGame();
-                }
-            }, 1000);
+                timeLeft -= 0.1;
+                const percentage = (timeLeft / totalTime) * 100;
+                timerBar.style.width = `${percentage}%`;
+                
+                // Change color to red when time is low
+                if (timeLeft < 10) timerBar.style.backgroundColor = '#ff007f';
 
-            // Set orb to move on its own if not clicked quickly enough
-            gameInterval = setInterval(moveOrb, 1000);
+                if (timeLeft <= 0) endGame();
+            }, 100);
+
+            gameInterval = setInterval(moveOrb, 1200);
         }
 
         function moveOrb() {
-            // Calculate boundaries (offsetting for the 55px header)
-            const maxX = container.clientWidth - 40;
-            const maxY = container.clientHeight - 40 - 55; 
+            // Container bounds minus the header/timer (approx 70px) and padding
+            const padding = 30; 
+            const maxX = container.clientWidth - padding;
+            const maxY = container.clientHeight - 70 - padding; 
 
-            // Generate random coordinates
-            const randomX = Math.floor(Math.random() * maxX);
-            const randomY = Math.floor(Math.random() * maxY) + 55; 
+            const randomX = Math.floor(Math.random() * (maxX - padding) + padding);
+            const randomY = Math.floor(Math.random() * (maxY - padding) + 70 + padding); 
 
-            // Apply new position
             orb.style.left = `${randomX}px`;
             orb.style.top = `${randomY}px`;
         }
 
-        // Handle player clicking the orb
-        orb.addEventListener('mousedown', () => {
+        orb.addEventListener('mousedown', (e) => {
+            playSound('pop');
+            
+            // Get coordinates relative to the container for particles
+            const rect = container.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            createParticles(x, y);
+
             score++;
             scoreDisplay.textContent = score;
             
-            // Clear current movement interval
             clearInterval(gameInterval); 
-            
-            // Move immediately to a new spot
             moveOrb();
             
-            // Progressive difficulty: Orb moves faster as score increases
-            const newSpeed = Math.max(400, 1000 - (score * 20));
+            // Difficulty curve: Speed increases, Size decreases
+            const newSpeed = Math.max(400, 1200 - (score * 25));
+            const newSize = Math.max(20, 45 - (score * 0.5));
+            
+            orb.style.width = `${newSize}px`;
+            orb.style.height = `${newSize}px`;
+
             gameInterval = setInterval(moveOrb, newSpeed);
         });
 
         function endGame() {
-            // Stop timers
             clearInterval(gameInterval);
             clearInterval(timerInterval);
+            playSound('gameover');
             
-            // Reset UI
+            // Screen shake effect
+            container.classList.add('shake-active');
+            setTimeout(() => container.classList.remove('shake-active'), 200);
+
             orb.style.display = 'none';
             startBtn.style.display = 'block';
-            startBtn.textContent = 'Play Again';
-            
-            // Show final score
-            alert(`Game Over! You caught ${score} orbs.`);
+            startBtn.textContent = `SCORE: ${score} - PLAY AGAIN`;
         }
 
         startBtn.addEventListener('click', startGame);
