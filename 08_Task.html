@@ -1,1 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Orb Catcher</title>
+    <style>
+        /* Base Styling */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #0f0f13;
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
 
+        /* Game Board Container */
+        #game-container {
+            position: relative;
+            width: 400px;
+            height: 500px;
+            background: #1a1a24;
+            border: 2px solid #333;
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
+            overflow: hidden;
+        }
+
+        /* Top Score/Time Bar */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 20px;
+            background: #252533;
+            border-bottom: 2px solid #333;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        #time { color: #ff007f; }
+        #score { color: #00ffcc; }
+
+        /* The Interactive Target */
+        #orb {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: #00ffcc;
+            border-radius: 50%;
+            box-shadow: 0 0 15px #00ffcc, 0 0 30px #00ffcc;
+            cursor: crosshair;
+            transition: left 0.1s ease, top 0.1s ease, transform 0.1s;
+        }
+
+        #orb:active {
+            transform: scale(0.8);
+        }
+
+        /* Controls */
+        .btn {
+            margin-top: 25px;
+            padding: 12px 35px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            background: #ff007f;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 0 15px #ff007f;
+            transition: transform 0.1s, box-shadow 0.2s;
+        }
+
+        .btn:hover {
+            box-shadow: 0 0 25px #ff007f;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Developer Credit */
+        .footer {
+            margin-top: 20px;
+            font-size: 0.85rem;
+            color: #555;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+    <h1 style="color: #00ffcc; text-shadow: 0 0 15px #00ffcc; letter-spacing: 2px;">Neon Orb Catcher</h1>
+
+    <div id="game-container">
+        <div class="header">
+            <span>Score: <span id="score">0</span></span>
+            <span>Time: <span id="time">30</span>s</span>
+        </div>
+        <div id="orb" style="display: none;"></div>
+    </div>
+
+    <button class="btn" id="start-btn">Start Game</button>
+    
+    <div class="footer">Creative Build by Aniket Yadav | BBD</div>
+
+    <script>
+        const orb = document.getElementById('orb');
+        const scoreDisplay = document.getElementById('score');
+        const timeDisplay = document.getElementById('time');
+        const startBtn = document.getElementById('start-btn');
+        const container = document.getElementById('game-container');
+
+        let score = 0;
+        let timeLeft = 30;
+        let gameInterval;
+        let timerInterval;
+
+        function startGame() {
+            // Reset variables
+            score = 0;
+            timeLeft = 30;
+            scoreDisplay.textContent = score;
+            timeDisplay.textContent = timeLeft;
+            
+            // Toggle UI elements
+            startBtn.style.display = 'none';
+            orb.style.display = 'block';
+
+            moveOrb();
+            
+            // Start Countdown Timer
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timeDisplay.textContent = timeLeft;
+                if (timeLeft <= 0) {
+                    endGame();
+                }
+            }, 1000);
+
+            // Set orb to move on its own if not clicked quickly enough
+            gameInterval = setInterval(moveOrb, 1000);
+        }
+
+        function moveOrb() {
+            // Calculate boundaries (offsetting for the 55px header)
+            const maxX = container.clientWidth - 40;
+            const maxY = container.clientHeight - 40 - 55; 
+
+            // Generate random coordinates
+            const randomX = Math.floor(Math.random() * maxX);
+            const randomY = Math.floor(Math.random() * maxY) + 55; 
+
+            // Apply new position
+            orb.style.left = `${randomX}px`;
+            orb.style.top = `${randomY}px`;
+        }
+
+        // Handle player clicking the orb
+        orb.addEventListener('mousedown', () => {
+            score++;
+            scoreDisplay.textContent = score;
+            
+            // Clear current movement interval
+            clearInterval(gameInterval); 
+            
+            // Move immediately to a new spot
+            moveOrb();
+            
+            // Progressive difficulty: Orb moves faster as score increases
+            const newSpeed = Math.max(400, 1000 - (score * 20));
+            gameInterval = setInterval(moveOrb, newSpeed);
+        });
+
+        function endGame() {
+            // Stop timers
+            clearInterval(gameInterval);
+            clearInterval(timerInterval);
+            
+            // Reset UI
+            orb.style.display = 'none';
+            startBtn.style.display = 'block';
+            startBtn.textContent = 'Play Again';
+            
+            // Show final score
+            alert(`Game Over! You caught ${score} orbs.`);
+        }
+
+        startBtn.addEventListener('click', startGame);
+    </script>
+</body>
+</html>
