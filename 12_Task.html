@@ -1,1 +1,76 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Emoji Rain</title>
+
+<style>
+    *{
+        margin:0;
+        padding:0;
+        box-sizing:border-box;
+    }
+
+    body{
+        height:100vh;
+        overflow:hidden;
+        background:linear-gradient(135deg,#0f172a,#1e293b);
+    }
+
+    .emoji{
+        position:absolute;
+        top:-50px;
+        font-size:30px;
+        animation:fall linear forwards;
+        user-select:none;
+    }
+
+    @keyframes fall{
+        from{
+            transform:translateY(0) rotate(0deg);
+        }
+        to{
+            transform:translateY(110vh) rotate(360deg);
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<script>
+const emojis = [
+    "😀","😂","😍","😎","🥳","🔥",
+    "❤️","✨","🎉","🚀","🌈","🍕",
+    "🐱","🦄","⚽","🎮","🍔","🎵"
+];
+
+function createEmoji() {
+    const emoji = document.createElement("div");
+    emoji.classList.add("emoji");
+
+    emoji.innerHTML =
+        emojis[Math.floor(Math.random() * emojis.length)];
+
+    emoji.style.left = Math.random() * window.innerWidth + "px";
+
+    const size = Math.random() * 40 + 20;
+    emoji.style.fontSize = size + "px";
+
+    const duration = Math.random() * 4 + 3;
+    emoji.style.animationDuration = duration + "s";
+
+    document.body.appendChild(emoji);
+
+    setTimeout(() => {
+        emoji.remove();
+    }, duration * 1000);
+}
+
+setInterval(createEmoji, 150);
+</script>
+
+</body>
+</html>
